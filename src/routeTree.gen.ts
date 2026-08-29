@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ConnexionRouteImport } from './routes/connexion'
+import { Route as RestaurantsRouteImport } from './routes/restaurants'
 import { Route as TableauDeBordRouteImport } from './routes/tableau-de-bord'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const ConnexionRoute = ConnexionRouteImport.update({
   path: '/connexion',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RestaurantsRoute = RestaurantsRouteImport.update({
+  id: '/restaurants',
+  path: '/restaurants',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TableauDeBordRoute = TableauDeBordRouteImport.update({
   id: '/tableau-de-bord',
   path: '/tableau-de-bord',
@@ -32,30 +38,34 @@ const TableauDeBordRoute = TableauDeBordRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/connexion': typeof ConnexionRoute
+  '/restaurants': typeof RestaurantsRoute
   '/tableau-de-bord': typeof TableauDeBordRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/connexion': typeof ConnexionRoute
+  '/restaurants': typeof RestaurantsRoute
   '/tableau-de-bord': typeof TableauDeBordRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/connexion': typeof ConnexionRoute
+  '/restaurants': typeof RestaurantsRoute
   '/tableau-de-bord': typeof TableauDeBordRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/connexion' | '/tableau-de-bord'
+  fullPaths: '/' | '/connexion' | '/restaurants' | '/tableau-de-bord'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/connexion' | '/tableau-de-bord'
-  id: '__root__' | '/' | '/connexion' | '/tableau-de-bord'
+  to: '/' | '/connexion' | '/restaurants' | '/tableau-de-bord'
+  id: '__root__' | '/' | '/connexion' | '/restaurants' | '/tableau-de-bord'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ConnexionRoute: typeof ConnexionRoute
+  RestaurantsRoute: typeof RestaurantsRoute
   TableauDeBordRoute: typeof TableauDeBordRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConnexionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/restaurants': {
+      id: '/restaurants'
+      path: '/restaurants'
+      fullPath: '/restaurants'
+      preLoaderRoute: typeof RestaurantsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tableau-de-bord': {
       id: '/tableau-de-bord'
       path: '/tableau-de-bord'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ConnexionRoute: ConnexionRoute,
+  RestaurantsRoute: RestaurantsRoute,
   TableauDeBordRoute: TableauDeBordRoute,
 }
 export const routeTree = rootRouteImport
