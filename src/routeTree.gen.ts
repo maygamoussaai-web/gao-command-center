@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ConnexionRouteImport } from './routes/connexion'
+import { Route as HistoriquePaiementsRouteImport } from './routes/historique-paiements'
 import { Route as RestaurantsRouteImport } from './routes/restaurants'
 import { Route as TableauDeBordRouteImport } from './routes/tableau-de-bord'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const ConnexionRoute = ConnexionRouteImport.update({
   id: '/connexion',
   path: '/connexion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoriquePaiementsRoute = HistoriquePaiementsRouteImport.update({
+  id: '/historique-paiements',
+  path: '/historique-paiements',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RestaurantsRoute = RestaurantsRouteImport.update({
@@ -38,12 +44,14 @@ const TableauDeBordRoute = TableauDeBordRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/connexion': typeof ConnexionRoute
+  '/historique-paiements': typeof HistoriquePaiementsRoute
   '/restaurants': typeof RestaurantsRoute
   '/tableau-de-bord': typeof TableauDeBordRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/connexion': typeof ConnexionRoute
+  '/historique-paiements': typeof HistoriquePaiementsRoute
   '/restaurants': typeof RestaurantsRoute
   '/tableau-de-bord': typeof TableauDeBordRoute
 }
@@ -51,20 +59,38 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/connexion': typeof ConnexionRoute
+  '/historique-paiements': typeof HistoriquePaiementsRoute
   '/restaurants': typeof RestaurantsRoute
   '/tableau-de-bord': typeof TableauDeBordRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/connexion' | '/restaurants' | '/tableau-de-bord'
+  fullPaths:
+    | '/'
+    | '/connexion'
+    | '/historique-paiements'
+    | '/restaurants'
+    | '/tableau-de-bord'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/connexion' | '/restaurants' | '/tableau-de-bord'
-  id: '__root__' | '/' | '/connexion' | '/restaurants' | '/tableau-de-bord'
+  to:
+    | '/'
+    | '/connexion'
+    | '/historique-paiements'
+    | '/restaurants'
+    | '/tableau-de-bord'
+  id:
+    | '__root__'
+    | '/'
+    | '/connexion'
+    | '/historique-paiements'
+    | '/restaurants'
+    | '/tableau-de-bord'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ConnexionRoute: typeof ConnexionRoute
+  HistoriquePaiementsRoute: typeof HistoriquePaiementsRoute
   RestaurantsRoute: typeof RestaurantsRoute
   TableauDeBordRoute: typeof TableauDeBordRoute
 }
@@ -83,6 +109,13 @@ declare module '@tanstack/react-router' {
       path: '/connexion'
       fullPath: '/connexion'
       preLoaderRoute: typeof ConnexionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/historique-paiements': {
+      id: '/historique-paiements'
+      path: '/historique-paiements'
+      fullPath: '/historique-paiements'
+      preLoaderRoute: typeof HistoriquePaiementsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/restaurants': {
@@ -105,6 +138,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ConnexionRoute: ConnexionRoute,
+  HistoriquePaiementsRoute: HistoriquePaiementsRoute,
   RestaurantsRoute: RestaurantsRoute,
   TableauDeBordRoute: TableauDeBordRoute,
 }
