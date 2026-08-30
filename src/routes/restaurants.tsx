@@ -168,28 +168,34 @@ function PageRestaurants() {
           </p>
         ) : (
           <ul>
-            {liste.map((r) => (
-              <li key={r.id}>
+            {liste.map((r, i) => (
+              <li
+                key={r.id}
+                className="animate-fade-up"
+                style={{ animationDelay: `${Math.min(i, 14) * 28}ms` }}
+              >
                 <button
                   onClick={() => setSelection(r.id)}
-                  className="grid w-full grid-cols-1 gap-2 row-interactive border-b border-border px-4 py-2 text-left last:border-0 md:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] md:items-center md:gap-4"
+                  className={`row-interactive grid w-full grid-cols-1 gap-1.5 border-b border-border px-4 py-2 text-left last:border-0 md:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,0.8fr)] md:items-center md:gap-4 ${
+                    selection === r.id ? "bg-accent/60" : ""
+                  }`}
                 >
-                  <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex min-w-0 items-center gap-2.5">
                     {r.logo_url ? (
                       <img
                         src={r.logo_url}
                         alt={`Logo ${r.nom}`}
                         loading="lazy"
-                        className="size-9 shrink-0 rounded-lg object-cover"
+                        className="size-7 shrink-0 rounded-md object-cover ring-1 ring-border"
                       />
                     ) : (
-                      <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-surface-2 text-muted-foreground">
-                        <Store className="size-4" />
+                      <span className="grid size-7 shrink-0 place-items-center rounded-md bg-surface-2 text-muted-foreground">
+                        <Store className="size-3.5" />
                       </span>
                     )}
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">{r.nom}</p>
-                      <p className="truncate text-xs text-muted-foreground">{r.quartier}</p>
+                      <p className="truncate text-[13px] font-medium">{r.nom}</p>
+                      <p className="truncate text-[11px] text-muted-foreground">{r.quartier}</p>
                     </div>
                   </div>
                   <div className="min-w-0 text-xs text-muted-foreground md:text-sm">
