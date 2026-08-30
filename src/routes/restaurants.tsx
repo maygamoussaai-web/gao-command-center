@@ -96,7 +96,7 @@ function PageRestaurants() {
         </p>
         <button
           onClick={() => refetch()}
-          className="mt-4 h-9 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground"
+          className="mt-4 btn-primary"
         >
           Réessayer
         </button>
@@ -105,10 +105,10 @@ function PageRestaurants() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
+    <div className="mx-auto max-w-[1400px] space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold">Restaurants</h1>
+          <h1 className="text-[19px] font-semibold">Restaurants</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {formatNombre(data.length)} restaurants partenaires · {formatFCFA(totalDu)} à encaisser
             {suspendus > 0 ? ` · ${formatNombre(suspendus)} suspendu(s)` : ""}
@@ -121,7 +121,7 @@ function PageRestaurants() {
               value={recherche}
               onChange={(e) => setRecherche(e.target.value)}
               placeholder="Rechercher un restaurant"
-              className="h-9 w-56 rounded-lg border border-border bg-surface-2 pr-3 pl-8 text-sm outline-none focus:border-primary"
+              className="field w-56 pl-8"
             />
           </div>
           <div className="flex rounded-lg border border-border bg-surface-2 p-0.5">
@@ -155,8 +155,8 @@ function PageRestaurants() {
         </div>
       </div>
 
-      <div className="panel overflow-hidden">
-        <div className="hidden grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] gap-4 border-b border-border px-5 py-2.5 text-[11px] font-medium tracking-wide text-muted-foreground uppercase md:grid">
+      <div className="panel animate-fade-up overflow-hidden">
+        <div className="hidden grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] gap-4 border-b border-border px-5 py-2.5 label-kpi md:grid">
           <span>Restaurant</span>
           <span>Restaurateur</span>
           <span className="text-right">Solde dû</span>
@@ -172,7 +172,7 @@ function PageRestaurants() {
               <li key={r.id}>
                 <button
                   onClick={() => setSelection(r.id)}
-                  className="grid w-full grid-cols-1 gap-2 border-b border-border px-5 py-3 text-left transition-colors last:border-0 hover:bg-accent/50 md:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] md:items-center md:gap-4"
+                  className="grid w-full grid-cols-1 gap-2 row-interactive border-b border-border px-4 py-2 text-left last:border-0 md:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] md:items-center md:gap-4"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     {r.logo_url ? (
@@ -269,8 +269,8 @@ function PanneauDetail({ id, onClose }: { id: string; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" onClick={onClose} />
-      <aside className="relative flex h-full w-full max-w-lg flex-col overflow-y-auto border-l border-border bg-background">
-        <header className="sticky top-0 flex items-center justify-between gap-4 border-b border-border bg-background/95 px-5 py-4 backdrop-blur">
+      <aside className="animate-slide-left relative flex h-full w-full max-w-lg flex-col overflow-y-auto border-l border-border bg-background">
+        <header className="sticky top-0 flex items-center justify-between gap-4 border-b border-border bg-background/95 px-5 py-3.5 backdrop-blur">
           <h2 className="text-base font-semibold">{r?.nom ?? "Restaurant"}</h2>
           <button
             onClick={onClose}
@@ -290,9 +290,9 @@ function PanneauDetail({ id, onClose }: { id: string; onClose: () => void }) {
             {error instanceof Error ? error.message : "Restaurant introuvable."}
           </p>
         ) : (
-          <div className="space-y-5 p-5">
-            <section className="panel p-5">
-              <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+          <div className="space-y-4 p-4">
+            <section className="panel p-4">
+              <p className="label-kpi">
                 Solde dû
               </p>
               <p
@@ -304,7 +304,7 @@ function PanneauDetail({ id, onClose }: { id: string; onClose: () => void }) {
               <div className="mt-4 flex flex-wrap gap-2">
                 <button
                   onClick={() => setAction("paiement")}
-                  className="inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground"
+                  className="btn-primary"
                 >
                   <Banknote className="size-4" />
                   Encaisser
@@ -321,7 +321,7 @@ function PanneauDetail({ id, onClose }: { id: string; onClose: () => void }) {
                   <button
                     onClick={() => lever.mutate()}
                     disabled={lever.isPending}
-                    className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-4 text-sm font-medium hover:bg-accent disabled:opacity-60"
+                    className="btn-ghost"
                   >
                     {lever.isPending ? (
                       <Loader2 className="size-4 animate-spin" />
@@ -345,7 +345,7 @@ function PanneauDetail({ id, onClose }: { id: string; onClose: () => void }) {
               </p>
             )}
 
-            <section className="panel space-y-3 p-5 text-sm">
+            <section className="panel space-y-2.5 p-4 text-sm">
               <Ligne icone={<MapPin className="size-4" />} label="Quartier" valeur={r.quartier} />
               <Ligne
                 icone={<Phone className="size-4" />}
@@ -368,8 +368,8 @@ function PanneauDetail({ id, onClose }: { id: string; onClose: () => void }) {
               />
             </section>
 
-            <section className="panel p-5">
-              <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+            <section className="panel p-4">
+              <p className="label-kpi">
                 Activité facturée
               </p>
               <div className="mt-3 grid grid-cols-3 gap-3 text-center">
@@ -393,8 +393,8 @@ function PanneauDetail({ id, onClose }: { id: string; onClose: () => void }) {
               </div>
             </section>
 
-            <section className="panel p-5">
-              <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+            <section className="panel p-4">
+              <p className="label-kpi">
                 Encaissements de ce restaurant
               </p>
               {data.paiements.length === 0 ? (
@@ -487,18 +487,18 @@ function ModalPaiement({
           inputMode="numeric"
           value={montant}
           onChange={(e) => setMontant(e.target.value)}
-          className="num mt-1.5 h-10 w-full rounded-lg border border-border bg-surface-2 px-3 text-sm outline-none focus:border-primary"
+          className="field num mt-1.5"
         />
       </label>
       {m.error && <p className="mt-3 text-sm text-destructive">{(m.error as Error).message}</p>}
       <div className="mt-5 flex justify-end gap-2">
-        <button onClick={onClose} className="h-9 rounded-lg border border-border px-4 text-sm">
+        <button onClick={onClose} className="btn-ghost">
           Annuler
         </button>
         <button
           onClick={() => m.mutate()}
           disabled={m.isPending || !Number(montant)}
-          className="inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground disabled:opacity-60"
+          className="btn-primary"
         >
           {m.isPending && <Loader2 className="size-4 animate-spin" />}
           Enregistrer l'encaissement
@@ -540,12 +540,12 @@ function ModalSuspension({
           onChange={(e) => setMotif(e.target.value)}
           rows={3}
           placeholder="Ex. : solde impayé depuis plus de 15 jours"
-          className="mt-1.5 w-full rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm outline-none focus:border-primary"
+          className="field mt-1.5 h-auto py-2"
         />
       </label>
       {m.error && <p className="mt-3 text-sm text-destructive">{(m.error as Error).message}</p>}
       <div className="mt-5 flex justify-end gap-2">
-        <button onClick={onClose} className="h-9 rounded-lg border border-border px-4 text-sm">
+        <button onClick={onClose} className="btn-ghost">
           Annuler
         </button>
         <button
@@ -573,7 +573,7 @@ function Modal({
   return (
     <div className="fixed inset-0 z-[60] grid place-items-center p-4">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="panel relative w-full max-w-md p-6">
+      <div className="panel animate-pop relative w-full max-w-md p-5">
         <div className="flex items-start justify-between gap-4">
           <h3 className="text-sm font-semibold">{titre}</h3>
           <button

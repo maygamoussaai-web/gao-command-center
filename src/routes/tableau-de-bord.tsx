@@ -83,7 +83,7 @@ function TableauDeBord() {
         </p>
         <button
           onClick={() => refetch()}
-          className="mt-4 h-9 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground"
+          className="mt-4 btn-primary"
         >
           Réessayer
         </button>
@@ -92,10 +92,10 @@ function TableauDeBord() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
+    <div className="mx-auto max-w-[1400px] space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold">Tableau de bord</h1>
+          <h1 className="text-[19px] font-semibold">Tableau de bord</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             État de santé de la plateforme GAO FOOD, {libelle.suffixe}.
           </p>
@@ -127,7 +127,7 @@ function TableauDeBord() {
       </div>
 
       {/* Solde dû par les restaurateurs — métrique prioritaire */}
-      <section className="panel relative overflow-hidden p-6">
+      <section className="panel animate-fade-up relative overflow-hidden p-5">
         <div
           aria-hidden
           className="absolute inset-y-0 left-0 w-1"
@@ -135,12 +135,12 @@ function TableauDeBord() {
         />
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div>
-            <p className="flex items-center gap-2 text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+            <p className="flex items-center gap-2 label-kpi">
               <Banknote className="size-3.5" style={{ color: "var(--color-money)" }} />
               Solde total dû par les restaurateurs
             </p>
             <p
-              className="num mt-3 text-4xl font-semibold sm:text-5xl"
+              className="num mt-2 text-[34px] leading-none font-semibold sm:text-[42px]"
               style={{ color: "var(--color-money)" }}
             >
               {formatFCFA(data.total_solde_admin)}
@@ -226,12 +226,12 @@ function CarteStat({
   valeur: string;
 }) {
   return (
-    <div className="panel p-5">
+    <div className="panel p-4">
       <div className="flex items-center gap-2 text-muted-foreground">
         {icone}
         <span className="text-[11px] font-medium tracking-wide uppercase">{label}</span>
       </div>
-      <p className="num mt-3 text-3xl font-semibold">{valeur}</p>
+      <p className="num mt-2 text-3xl font-semibold">{valeur}</p>
     </div>
   );
 }
@@ -248,7 +248,7 @@ function CarteClassement({
   valeur: string | null;
 }) {
   return (
-    <div className="panel p-5">
+    <div className="panel p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-muted-foreground">
           <Trophy className="size-4" />
