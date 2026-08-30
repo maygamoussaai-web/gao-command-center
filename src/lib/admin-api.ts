@@ -80,3 +80,94 @@ export function formatFCFA(value: number | null | undefined) {
 export function formatNombre(value: number | null | undefined) {
   return fcfa.format(value ?? 0);
 }
+
+export type RestaurantAdmin = {
+  id: string;
+  nom: string;
+  logo_url: string | null;
+  quartier: string;
+  prix_livraison: number;
+  horaire_ouverture: string;
+  horaire_fermeture: string;
+  delai_livraison_min_min: number;
+  delai_livraison_max_min: number;
+  solde_admin: number;
+  statut: "actif" | "suspendu";
+  motif_suspension: string | null;
+  created_at: string;
+  restaurateurs: { prenom: string; nom: string; numero: string } | null;
+};
+
+export type PaiementSolde = {
+  id: string;
+  restaurant_id: string;
+  montant: number;
+  created_at: string;
+  restaurants?: { nom: string } | null;
+};
+
+export type StatsRestaurant = {
+  jour: { commandes_validees: number; promotions: number };
+  semaine: { commandes_validees: number; promotions: number };
+  mois: { commandes_validees: number; promotions: number };
+};
+
+export function listRestaurants(token: string) {
+  return invoke<{ restaurants: RestaurantAdmin[] }>("admin-api", {
+    action: "list_restaurants",
+    token,
+  }).then((r) => r.restaurants ?? []);
+}
+
+export function detailRestaurant(token: string, restaurant_id: string) {
+  return invoke<{
+    restaurant: RestaurantAdmin | null;
+    stats: StatsRestaurant;
+    paiements: PaiementSolde[];
+  }>("admin-api", { action: "detail_restaurant", token, restaurant_id });
+}
+
+export function historiquePaiements(token: string) {
+  return invoke<{ paiements: PaiementSolde[] }>("admin-api", {
+    action: "historique_paiements",
+    token,
+  }).then((r) => r.paiements ?? []);
+}
+
+export function enregistrerPaiement(token: string, restaurant_id: string, montant: number) {
+  return invoke<{ ok?: boolean }>("admin-api", {
+    action: "enregistrer_paiement",
+    token,
+    restaurant_id,
+    montant,
+  });
+}
+
+export function suspendreRestaurant(token: string, restaurant_id: string, motif: string) {
+  return invoke<{ ok?: boolean }>("admin-api", {
+    action: "suspendre",
+    token,
+    restaurant_id,
+    motif,
+  });
+}
+
+export function leverSuspension(token: string, restaurant_id: string) {
+  return invoke<{ ok?: boolean }>("admin-api", {
+    action: "lever_suspension",
+    token,
+    restaurant_id,
+  });
+}
+
+const dateFmt = new Intl.DateTimeFormat("fr-FR", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+export function formatDate(iso: string) {
+  return dateFmt.format(new Date(iso));
+}
