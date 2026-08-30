@@ -198,18 +198,18 @@ function PageRestaurants() {
                       <p className="truncate text-[11px] text-muted-foreground">{r.quartier}</p>
                     </div>
                   </div>
-                  <div className="min-w-0 text-xs text-muted-foreground md:text-sm">
+                  <div className="min-w-0 text-[11px] text-muted-foreground md:text-[12px]">
                     <p className="truncate text-foreground">
                       {r.restaurateurs
                         ? `${r.restaurateurs.prenom} ${r.restaurateurs.nom}`
                         : "Restaurateur inconnu"}
                     </p>
-                    <p className="num truncate text-xs text-muted-foreground">
+                    <p className="num truncate text-[11px] text-muted-foreground">
                       {r.restaurateurs?.numero ?? "—"}
                     </p>
                   </div>
                   <p
-                    className="num text-sm font-semibold md:text-right"
+                    className="num text-[13px] font-semibold md:text-right"
                     style={
                       Number(r.solde_admin) > 0 ? { color: "var(--color-money)" } : undefined
                     }
