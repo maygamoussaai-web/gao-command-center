@@ -73,7 +73,7 @@ function Connexion() {
           </p>
         </div>
 
-        <div className="panel p-6">
+        <div className="panel p-4">
           <form onSubmit={soumettre} className="space-y-5">
             <ChampMotDePasse
               id="mot_de_passe"

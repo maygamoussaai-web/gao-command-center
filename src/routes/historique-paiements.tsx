@@ -96,7 +96,7 @@ function PagePaiements() {
         </p>
         <button
           onClick={() => refetch()}
-          className="mt-4 h-9 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground"
+          className="mt-4 btn-primary"
         >
           Réessayer
         </button>
@@ -105,10 +105,10 @@ function PagePaiements() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="mx-auto max-w-[1200px] space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold">Historique des paiements</h1>
+          <h1 className="text-[19px] font-semibold">Historique des paiements</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Encaissements enregistrés auprès des restaurateurs de GAO FOOD.
           </p>
@@ -117,7 +117,7 @@ function PagePaiements() {
           <select
             value={restaurant}
             onChange={(e) => setRestaurant(e.target.value)}
-            className="h-9 rounded-lg border border-border bg-surface-2 px-3 text-sm outline-none focus:border-primary"
+            className="field w-auto"
           >
             <option value="tous">Tous les restaurants</option>
             {(restaurants ?? []).map((r) => (
@@ -151,13 +151,13 @@ function PagePaiements() {
         </div>
       </div>
 
-      <section className="panel flex flex-wrap items-center justify-between gap-6 p-6">
+      <section className="panel animate-fade-up flex flex-wrap items-center justify-between gap-6 p-5">
         <div>
-          <p className="flex items-center gap-2 text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+          <p className="flex items-center gap-2 label-kpi">
             <Banknote className="size-3.5" style={{ color: "var(--color-money)" }} />
             Total encaissé sur la sélection
           </p>
-          <p className="num mt-3 text-4xl font-semibold" style={{ color: "var(--color-money)" }}>
+          <p className="num mt-2 text-[34px] leading-none font-semibold" style={{ color: "var(--color-money)" }}>
             {formatFCFA(total)}
           </p>
         </div>
@@ -167,8 +167,8 @@ function PagePaiements() {
         </div>
       </section>
 
-      <div className="panel overflow-hidden">
-        <div className="hidden grid-cols-[minmax(0,1.2fr)_minmax(0,2fr)_minmax(0,1fr)] gap-4 border-b border-border px-5 py-2.5 text-[11px] font-medium tracking-wide text-muted-foreground uppercase md:grid">
+      <div className="panel animate-fade-up overflow-hidden">
+        <div className="hidden grid-cols-[minmax(0,1.2fr)_minmax(0,2fr)_minmax(0,1fr)] gap-4 border-b border-border px-5 py-2.5 label-kpi md:grid">
           <span>Date</span>
           <span>Restaurant</span>
           <span className="text-right">Montant</span>
