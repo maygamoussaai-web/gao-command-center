@@ -235,7 +235,7 @@ function BadgeStatut({ statut }: { statut: RestaurantAdmin["statut"] }) {
   const suspendu = statut === "suspendu";
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium ${
+      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium ${
         suspendu
           ? "border-destructive/30 bg-destructive/10 text-destructive"
           : "border-border bg-surface-2 text-muted-foreground"
@@ -274,7 +274,7 @@ function PanneauDetail({ id, onClose }: { id: string; onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" onClick={onClose} />
+      <div className="animate-fade-in absolute inset-0 bg-black/50 backdrop-blur-[2px]" onClick={onClose} />
       <aside className="animate-slide-left relative flex h-full w-full max-w-lg flex-col overflow-y-auto border-l border-border bg-background">
         <header className="sticky top-0 flex items-center justify-between gap-4 border-b border-border bg-background/95 px-5 py-3.5 backdrop-blur">
           <h2 className="text-base font-semibold">{r?.nom ?? "Restaurant"}</h2>
@@ -578,7 +578,7 @@ function Modal({
 }) {
   return (
     <div className="fixed inset-0 z-[60] grid place-items-center p-4">
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+      <div className="animate-fade-in absolute inset-0 bg-black/60" onClick={onClose} />
       <div className="panel animate-pop relative w-full max-w-md p-5">
         <div className="flex items-start justify-between gap-4">
           <h3 className="text-sm font-semibold">{titre}</h3>

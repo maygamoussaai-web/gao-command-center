@@ -169,21 +169,25 @@ function TableauDeBord() {
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <CarteStat
+          index={0}
           icone={<Utensils className="size-4" />}
           label={`Commandes · ${libelle.label.toLowerCase()}`}
           valeur={formatNombre(stats?.nombre_commandes)}
         />
         <CarteStat
+          index={1}
           icone={<TrendingUp className="size-4" />}
           label="Moyenne de commandes / jour"
           valeur={formatNombre(Math.round(data.moyenne_commandes_par_jour))}
         />
         <CarteStat
+          index={2}
           icone={<Store className="size-4" />}
           label="Restaurants actifs"
           valeur={formatNombre(data.nombre_restaurants)}
         />
         <CarteStat
+          index={3}
           icone={<Users className="size-4" />}
           label="Clients inscrits"
           valeur={formatNombre(data.nombre_clients)}
@@ -220,16 +224,23 @@ function CarteStat({
   icone,
   label,
   valeur,
+  index = 0,
 }: {
   icone: React.ReactNode;
   label: string;
   valeur: string;
+  index?: number;
 }) {
   return (
-    <div className="panel p-4">
+    <div
+      className="panel lift animate-fade-up p-4"
+      style={{ animationDelay: `${80 + index * 60}ms` }}
+    >
       <div className="flex items-center gap-2 text-muted-foreground">
-        {icone}
-        <span className="text-[11px] font-medium tracking-wide uppercase">{label}</span>
+        <span className="grid size-7 place-items-center rounded-md bg-surface-2 text-primary">
+          {icone}
+        </span>
+        <span className="label-kpi text-[10px]">{label}</span>
       </div>
       <p className="num mt-2 text-3xl font-semibold">{valeur}</p>
     </div>
@@ -248,7 +259,7 @@ function CarteClassement({
   valeur: string | null;
 }) {
   return (
-    <div className="panel p-4">
+    <div className="panel lift animate-fade-up p-4" style={{ animationDelay: "340ms" }}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-muted-foreground">
           <Trophy className="size-4" />
