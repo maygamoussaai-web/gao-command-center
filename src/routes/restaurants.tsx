@@ -281,6 +281,24 @@ function PageRestaurants() {
   );
 }
 
+function MiniInfo({
+  label,
+  valeur,
+  sous,
+}: {
+  label: string;
+  valeur: string;
+  sous?: string;
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-surface p-2.5">
+      <p className="label-kpi">{label}</p>
+      <p className="mt-1 truncate text-[13px] font-medium">{valeur}</p>
+      {sous && <p className="num truncate text-[11px] text-muted-foreground">{sous}</p>}
+    </div>
+  );
+}
+
 function BadgeStatut({ statut }: { statut: RestaurantAdmin["statut"] }) {
   const suspendu = statut === "suspendu";
   return (
