@@ -48,14 +48,20 @@ export function ConsoleLayout({ children }: { children: ReactNode }) {
     <div className="flex min-h-screen bg-background">
       <aside className="sticky top-0 hidden h-screen w-[15rem] shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
         <div className="flex h-14 items-center gap-2.5 px-4">
-          <span className="relative grid size-7 place-items-center rounded-md bg-primary text-[13px] font-bold text-primary-foreground">
+          <span
+            className="relative grid size-7 place-items-center rounded-md text-[13px] font-bold text-primary-foreground"
+            style={{
+              backgroundImage:
+                "linear-gradient(140deg, var(--color-primary), var(--color-money))",
+            }}
+          >
             G
             <span
               aria-hidden
               className="animate-pulse-ring absolute inset-0 rounded-md ring-2 ring-primary"
             />
           </span>
-          <span className="wordmark text-[16px] text-foreground">GAO FOOD</span>
+          <span className="wordmark text-gradient text-[16px]">GAO FOOD</span>
         </div>
 
         <nav className="flex flex-1 flex-col gap-0.5 px-2 py-2">
@@ -66,10 +72,10 @@ export function ConsoleLayout({ children }: { children: ReactNode }) {
               <Link
                 key={to}
                 to={to}
-                className={`group relative flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] transition-all duration-200 ${
+                className={`group relative flex items-center gap-2.5 overflow-hidden rounded-lg px-2.5 py-2 text-[13px] transition-all duration-200 ${
                   actif
-                    ? "bg-sidebar-accent font-semibold text-foreground"
-                    : "text-sidebar-foreground hover:translate-x-0.5 hover:bg-sidebar-accent/60 hover:text-foreground"
+                    ? "seg-active font-semibold"
+                    : "sheen text-sidebar-foreground hover:translate-x-0.5 hover:bg-sidebar-accent/60 hover:text-foreground"
                 }`}
               >
                 <span
@@ -172,7 +178,10 @@ export function ConsoleLayout({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main key={pathname} className="animate-fade-up grid-surface flex-1 px-4 py-5 sm:px-6">
+        <main
+          key={pathname}
+          className="animate-fade-up grid-surface aurora flex-1 overflow-hidden px-4 py-5 sm:px-6"
+        >
           {children}
         </main>
 
