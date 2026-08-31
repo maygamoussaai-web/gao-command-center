@@ -178,7 +178,10 @@ export function ConsoleLayout({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main key={pathname} className="animate-fade-up grid-surface flex-1 px-4 py-5 sm:px-6">
+        <main
+          key={pathname}
+          className="animate-fade-up grid-surface aurora flex-1 overflow-hidden px-4 py-5 sm:px-6"
+        >
           {children}
         </main>
 
