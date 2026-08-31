@@ -48,14 +48,20 @@ export function ConsoleLayout({ children }: { children: ReactNode }) {
     <div className="flex min-h-screen bg-background">
       <aside className="sticky top-0 hidden h-screen w-[15rem] shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
         <div className="flex h-14 items-center gap-2.5 px-4">
-          <span className="relative grid size-7 place-items-center rounded-md bg-primary text-[13px] font-bold text-primary-foreground">
+          <span
+            className="relative grid size-7 place-items-center rounded-md text-[13px] font-bold text-primary-foreground"
+            style={{
+              backgroundImage:
+                "linear-gradient(140deg, var(--color-primary), var(--color-money))",
+            }}
+          >
             G
             <span
               aria-hidden
               className="animate-pulse-ring absolute inset-0 rounded-md ring-2 ring-primary"
             />
           </span>
-          <span className="wordmark text-[16px] text-foreground">GAO FOOD</span>
+          <span className="wordmark text-gradient text-[16px]">GAO FOOD</span>
         </div>
 
         <nav className="flex flex-1 flex-col gap-0.5 px-2 py-2">
