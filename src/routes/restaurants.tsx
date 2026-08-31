@@ -169,60 +169,107 @@ function PageRestaurants() {
           </p>
         ) : (
           <ul>
-            {liste.map((r, i) => (
-              <li
-                key={r.id}
-                className="animate-fade-up"
-                style={{ animationDelay: `${Math.min(i, 14) * 28}ms` }}
-              >
-                <button
-                  onClick={() => setSelection(r.id)}
-                  className={`row-interactive grid w-full grid-cols-1 gap-1.5 border-b border-border px-4 py-2 text-left last:border-0 md:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,0.8fr)] md:items-center md:gap-4 ${
-                    selection === r.id ? "bg-accent/60" : ""
-                  }`}
+            {liste.map((r, i) => {
+              const ouvert = deplie === r.id;
+              return (
+                <li
+                  key={r.id}
+                  className="animate-fade-up border-b border-border last:border-0"
+                  style={{ animationDelay: `${Math.min(i, 14) * 28}ms` }}
                 >
-                  <div className="flex min-w-0 items-center gap-2.5">
-                    {r.logo_url ? (
-                      <img
-                        src={r.logo_url}
-                        alt={`Logo ${r.nom}`}
-                        loading="lazy"
-                        className="size-7 shrink-0 rounded-md object-cover ring-1 ring-border"
-                      />
-                    ) : (
-                      <span className="grid size-7 shrink-0 place-items-center rounded-md bg-surface-2 text-muted-foreground">
-                        <Store className="size-3.5" />
-                      </span>
-                    )}
-                    <div className="min-w-0">
-                      <p className="truncate text-[13px] font-medium">{r.nom}</p>
-                      <p className="truncate text-[11px] text-muted-foreground">{r.quartier}</p>
-                    </div>
-                  </div>
-                  <div className="min-w-0 text-[11px] text-muted-foreground md:text-[12px]">
-                    <p className="truncate text-foreground">
-                      {r.restaurateurs
-                        ? `${r.restaurateurs.prenom} ${r.restaurateurs.nom}`
-                        : "Restaurateur inconnu"}
-                    </p>
-                    <p className="num truncate text-[11px] text-muted-foreground">
-                      {r.restaurateurs?.numero ?? "—"}
-                    </p>
-                  </div>
-                  <p
-                    className="num text-[13px] font-semibold md:text-right"
-                    style={
-                      Number(r.solde_admin) > 0 ? { color: "var(--color-money)" } : undefined
-                    }
+                  <button
+                    onClick={() => setDeplie(ouvert ? null : r.id)}
+                    aria-expanded={ouvert}
+                    className={`row-interactive grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5 px-3 py-2 text-left md:grid-cols-[auto_minmax(0,2fr)_minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,0.8fr)] md:gap-4 md:px-4 ${
+                      ouvert ? "bg-accent/40" : ""
+                    }`}
                   >
-                    {formatFCFA(Number(r.solde_admin))}
-                  </p>
-                  <div className="md:text-right">
-                    <BadgeStatut statut={r.statut} />
-                  </div>
-                </button>
-              </li>
-            ))}
+                    <ChevronRight
+                      className={`size-3.5 shrink-0 text-muted-foreground transition-transform duration-200 ${
+                        ouvert ? "rotate-90 text-primary" : ""
+                      }`}
+                    />
+                    <div className="flex min-w-0 items-center gap-2.5">
+                      {r.logo_url ? (
+                        <img
+                          src={r.logo_url}
+                          alt={`Logo ${r.nom}`}
+                          loading="lazy"
+                          className="size-7 shrink-0 rounded-md object-cover ring-1 ring-border"
+                        />
+                      ) : (
+                        <span className="grid size-7 shrink-0 place-items-center rounded-md bg-surface-2 text-muted-foreground">
+                          <Store className="size-3.5" />
+                        </span>
+                      )}
+                      <div className="min-w-0">
+                        <p className="truncate text-[13px] font-medium">{r.nom}</p>
+                        <p className="truncate text-[11px] text-muted-foreground">{r.quartier}</p>
+                      </div>
+                    </div>
+                    <div className="hidden min-w-0 text-[12px] text-muted-foreground md:block">
+                      <p className="truncate text-foreground">
+                        {r.restaurateurs
+                          ? `${r.restaurateurs.prenom} ${r.restaurateurs.nom}`
+                          : "Restaurateur inconnu"}
+                      </p>
+                      <p className="num truncate text-[11px]">{r.restaurateurs?.numero ?? "—"}</p>
+                    </div>
+                    <p
+                      className="num hidden text-[13px] font-semibold md:block md:text-right"
+                      style={Number(r.solde_admin) > 0 ? { color: "var(--color-money)" } : undefined}
+                    >
+                      {formatFCFA(Number(r.solde_admin))}
+                    </p>
+                    <div className="flex items-center justify-end gap-2 md:block md:text-right">
+                      <span
+                        className="num text-[12px] font-semibold md:hidden"
+                        style={
+                          Number(r.solde_admin) > 0 ? { color: "var(--color-money)" } : undefined
+                        }
+                      >
+                        {formatFCFA(Number(r.solde_admin))}
+                      </span>
+                      <BadgeStatut statut={r.statut} />
+                    </div>
+                  </button>
+
+                  {ouvert && (
+                    <div className="animate-fade-up grid gap-2 border-t border-border/70 bg-surface-2/40 px-4 py-3 sm:grid-cols-2 lg:grid-cols-4">
+                      <MiniInfo
+                        label="Restaurateur"
+                        valeur={
+                          r.restaurateurs
+                            ? `${r.restaurateurs.prenom} ${r.restaurateurs.nom}`
+                            : "Inconnu"
+                        }
+                        sous={r.restaurateurs?.numero ?? "—"}
+                      />
+                      <MiniInfo
+                        label="Horaires"
+                        valeur={`${r.horaire_ouverture.slice(0, 5)} – ${r.horaire_fermeture.slice(0, 5)}`}
+                        sous={r.quartier}
+                      />
+                      <MiniInfo
+                        label="Livraison"
+                        valeur={formatFCFA(r.prix_livraison)}
+                        sous={`${r.delai_livraison_min_min}–${r.delai_livraison_max_min} min`}
+                      />
+                      <div className="flex items-end justify-start sm:justify-end">
+                        <button onClick={() => setSelection(r.id)} className="btn-primary">
+                          Ouvrir la fiche
+                        </button>
+                      </div>
+                      {r.statut === "suspendu" && r.motif_suspension && (
+                        <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-[12px] text-destructive sm:col-span-2 lg:col-span-4">
+                          Suspendu — {r.motif_suspension}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
