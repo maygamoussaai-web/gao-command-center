@@ -72,10 +72,10 @@ export function ConsoleLayout({ children }: { children: ReactNode }) {
               <Link
                 key={to}
                 to={to}
-                className={`group relative flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] transition-all duration-200 ${
+                className={`group relative flex items-center gap-2.5 overflow-hidden rounded-lg px-2.5 py-2 text-[13px] transition-all duration-200 ${
                   actif
-                    ? "bg-sidebar-accent font-semibold text-foreground"
-                    : "text-sidebar-foreground hover:translate-x-0.5 hover:bg-sidebar-accent/60 hover:text-foreground"
+                    ? "seg-active font-semibold"
+                    : "sheen text-sidebar-foreground hover:translate-x-0.5 hover:bg-sidebar-accent/60 hover:text-foreground"
                 }`}
               >
                 <span
