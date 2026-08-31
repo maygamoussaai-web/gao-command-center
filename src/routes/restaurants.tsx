@@ -61,6 +61,7 @@ function PageRestaurants() {
   const [recherche, setRecherche] = useState("");
   const [filtre, setFiltre] = useState<Filtre>("tous");
   const [selection, setSelection] = useState<string | null>(null);
+  const [deplie, setDeplie] = useState<string | null>(null);
 
   const { data, isLoading, error, refetch, isRefetching } = useQuery({
     queryKey: ["restaurants", token],
