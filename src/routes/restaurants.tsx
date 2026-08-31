@@ -106,25 +106,32 @@ function PageRestaurants() {
 
   return (
     <div className="mx-auto max-w-[1400px] space-y-4">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="min-w-0">
           <h1 className="text-[19px] font-semibold">Restaurants</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {formatNombre(data.length)} restaurants partenaires · {formatFCFA(totalDu)} à encaisser
             {suspendus > 0 ? ` · ${formatNombre(suspendus)} suspendu(s)` : ""}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:flex-wrap sm:justify-end">
+          <div className="relative min-w-0 sm:w-56">
             <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
             <input
               value={recherche}
               onChange={(e) => setRecherche(e.target.value)}
-              placeholder="Rechercher un restaurant"
-              className="field w-56 pl-8"
+              placeholder="Rechercher"
+              className="field w-full pl-8"
             />
           </div>
-          <div className="flex rounded-lg border border-border bg-surface-2 p-0.5">
+          <button
+            onClick={() => refetch()}
+            aria-label="Actualiser"
+            className="grid size-9 shrink-0 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:order-3"
+          >
+            <RefreshCw className={`size-4 ${isRefetching ? "animate-spin" : ""}`} />
+          </button>
+          <div className="col-span-2 flex min-w-0 overflow-x-auto rounded-lg border border-border bg-surface-2 p-0.5 sm:col-auto sm:order-2">
             {(
               [
                 { cle: "tous", label: "Tous" },
@@ -135,7 +142,7 @@ function PageRestaurants() {
               <button
                 key={f.cle}
                 onClick={() => setFiltre(f.cle)}
-                className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                   filtre === f.cle
                     ? "bg-surface text-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
@@ -145,15 +152,9 @@ function PageRestaurants() {
               </button>
             ))}
           </div>
-          <button
-            onClick={() => refetch()}
-            aria-label="Actualiser"
-            className="grid size-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            <RefreshCw className={`size-4 ${isRefetching ? "animate-spin" : ""}`} />
-          </button>
         </div>
       </div>
+
 
       <div className="panel animate-fade-up overflow-hidden">
         <div className="hidden grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] gap-4 border-b border-border px-5 py-2.5 label-kpi md:grid">
