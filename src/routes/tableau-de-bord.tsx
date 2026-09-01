@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertTriangle,
   ArrowUpRight,
   Banknote,
+  Check,
   Loader2,
   RefreshCw,
+  Settings2,
   Store,
   TrendingUp,
   Trophy,
@@ -15,7 +17,14 @@ import {
 } from "lucide-react";
 import { ConsoleLayout } from "@/components/ConsoleLayout";
 import { useAuth } from "@/lib/auth-context";
-import { dashboard, formatFCFA, formatNombre, type PeriodeStats } from "@/lib/admin-api";
+import {
+  dashboard,
+  formatFCFA,
+  formatNombre,
+  updateParametres,
+  type ParametresAdmin,
+  type PeriodeStats,
+} from "@/lib/admin-api";
 
 export const Route = createFileRoute("/tableau-de-bord")({
   ssr: false,
@@ -108,7 +117,7 @@ function TableauDeBord() {
                 onClick={() => setPeriode(p.cle)}
                 className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                   periode === p.cle
-                    ? "bg-surface text-foreground shadow-sm"
+                    ? "seg-active"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -127,7 +136,7 @@ function TableauDeBord() {
       </div>
 
       {/* Solde dû par les restaurateurs — métrique prioritaire */}
-      <section className="panel animate-fade-up relative overflow-hidden p-5">
+      <section className="panel panel-glow sheen animate-fade-up relative overflow-hidden p-5">
         <div
           aria-hidden
           className="absolute inset-y-0 left-0 w-1"
@@ -150,20 +159,8 @@ function TableauDeBord() {
               restaurants de la plateforme.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
-            <div>
-              <p className="text-xs text-muted-foreground">Prix par commande payée</p>
-              <p className="num mt-1 font-semibold">
-                {formatFCFA(data.parametres.prix_par_commande_payee)}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Prix promotion</p>
-              <p className="num mt-1 font-semibold">
-                {formatFCFA(data.parametres.prix_promotion)}
-              </p>
-            </div>
-          </div>
+          <CarteParametres parametres={data.parametres} />
+
         </div>
       </section>
 
@@ -220,7 +217,87 @@ function TableauDeBord() {
   );
 }
 
+function CarteParametres({ parametres }: { parametres: ParametresAdmin }) {
+  const { token } = useAuth();
+  const qc = useQueryClient();
+  const [commande, setCommande] = useState(String(parametres.prix_par_commande_payee));
+  const [promo, setPromo] = useState(String(parametres.prix_promotion));
+
+  useEffect(() => {
+    setCommande(String(parametres.prix_par_commande_payee));
+    setPromo(String(parametres.prix_promotion));
+  }, [parametres.prix_par_commande_payee, parametres.prix_promotion]);
+
+  const m = useMutation({
+    mutationFn: () =>
+      updateParametres(token!, {
+        prix_par_commande_payee: Math.max(0, Math.round(Number(commande) || 0)),
+        prix_promotion: Math.max(0, Math.round(Number(promo) || 0)),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
+      qc.invalidateQueries({ queryKey: ["stats-restaurant"] });
+    },
+  });
+
+  const modifie =
+    Number(commande) !== parametres.prix_par_commande_payee ||
+    Number(promo) !== parametres.prix_promotion;
+
+  return (
+    <div className="w-full max-w-sm rounded-xl border border-border bg-surface-2/60 p-3.5">
+      <p className="flex items-center gap-2 label-kpi text-[10px]">
+        <Settings2 className="size-3.5 text-primary" />
+        Tarifs facturés aux restaurateurs
+      </p>
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <label className="block text-xs">
+          <span className="text-muted-foreground">Par commande validée</span>
+          <input
+            type="number"
+            min={0}
+            inputMode="numeric"
+            value={commande}
+            onChange={(e) => setCommande(e.target.value)}
+            className="field num mt-1.5"
+          />
+        </label>
+        <label className="block text-xs">
+          <span className="text-muted-foreground">Par promotion</span>
+          <input
+            type="number"
+            min={0}
+            inputMode="numeric"
+            value={promo}
+            onChange={(e) => setPromo(e.target.value)}
+            className="field num mt-1.5"
+          />
+        </label>
+      </div>
+      <div className="mt-3 flex items-center justify-between gap-3">
+        <p className="text-[11px] text-muted-foreground">Montants en FCFA</p>
+        <button
+          onClick={() => m.mutate()}
+          disabled={m.isPending || !modifie}
+          className="btn-primary h-8 px-3 text-xs"
+        >
+          {m.isPending ? (
+            <Loader2 className="size-3.5 animate-spin" />
+          ) : (
+            <Check className="size-3.5" />
+          )}
+          {m.isSuccess && !modifie ? "Enregistré" : "Enregistrer"}
+        </button>
+      </div>
+      {m.error && (
+        <p className="mt-2 text-[11px] text-destructive">{(m.error as Error).message}</p>
+      )}
+    </div>
+  );
+}
+
 function CarteStat({
+
   icone,
   label,
   valeur,
@@ -237,7 +314,7 @@ function CarteStat({
       style={{ animationDelay: `${80 + index * 60}ms` }}
     >
       <div className="flex items-center gap-2 text-muted-foreground">
-        <span className="grid size-7 place-items-center rounded-md bg-surface-2 text-primary">
+        <span className="icon-tile size-7">
           {icone}
         </span>
         <span className="label-kpi text-[10px]">{label}</span>

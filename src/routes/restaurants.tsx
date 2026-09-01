@@ -26,7 +26,9 @@ import {
   formatNombre,
   leverSuspension,
   listRestaurants,
+  statsRestaurant,
   suspendreRestaurant,
+  type PeriodeResto,
   type RestaurantAdmin,
 } from "@/lib/admin-api";
 
@@ -146,7 +148,7 @@ function PageRestaurants() {
                 onClick={() => setFiltre(f.cle)}
                 className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                   filtre === f.cle
-                    ? "bg-surface text-foreground shadow-sm"
+                    ? "seg-active"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -365,7 +367,7 @@ function PanneauDetail({ id, onClose }: { id: string; onClose: () => void }) {
           </p>
         ) : (
           <div className="space-y-4 p-4">
-            <section className="panel p-4">
+            <section className="panel panel-glow sheen p-4">
               <p className="label-kpi">
                 Solde dû
               </p>
@@ -442,30 +444,8 @@ function PanneauDetail({ id, onClose }: { id: string; onClose: () => void }) {
               />
             </section>
 
-            <section className="panel p-4">
-              <p className="label-kpi">
-                Activité facturée
-              </p>
-              <div className="mt-3 grid grid-cols-3 gap-3 text-center">
-                {(
-                  [
-                    ["Aujourd'hui", data.stats.jour],
-                    ["Cette semaine", data.stats.semaine],
-                    ["Ce mois", data.stats.mois],
-                  ] as const
-                ).map(([label, s]) => (
-                  <div key={label} className="rounded-lg border border-border bg-surface-2 p-3">
-                    <p className="text-[11px] text-muted-foreground">{label}</p>
-                    <p className="num mt-1 text-lg font-semibold">
-                      {formatNombre(s.commandes_validees)}
-                    </p>
-                    <p className="text-[11px] text-muted-foreground">
-                      {formatNombre(s.promotions)} promo.
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
+            <BlocStats restaurantId={id} soldeActuel={Number(r.solde_admin)} />
+
 
             <section className="panel p-4">
               <p className="label-kpi">
@@ -507,6 +487,110 @@ function PanneauDetail({ id, onClose }: { id: string; onClose: () => void }) {
     </div>
   );
 }
+
+const PERIODES_RESTO: { cle: PeriodeResto; label: string }[] = [
+  { cle: "jour", label: "Aujourd'hui" },
+  { cle: "semaine", label: "Cette semaine" },
+  { cle: "mois", label: "Ce mois" },
+  { cle: "tout", label: "En tout" },
+];
+
+function BlocStats({ restaurantId, soldeActuel }: { restaurantId: string; soldeActuel: number }) {
+  const { token } = useAuth();
+  const [periode, setPeriode] = useState<PeriodeResto>("jour");
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["stats-restaurant", restaurantId, token],
+    queryFn: () => statsRestaurant(token!, restaurantId),
+    enabled: !!token,
+  });
+
+  const s = data?.stats[periode];
+
+  return (
+    <section className="panel panel-glow p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="label-kpi">Activité facturée</p>
+        <div className="flex flex-wrap overflow-hidden rounded-lg border border-border bg-surface-2 p-0.5">
+          {PERIODES_RESTO.map((p) => (
+            <button
+              key={p.cle}
+              onClick={() => setPeriode(p.cle)}
+              className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                periode === p.cle ? "seg-active" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="mt-4 grid grid-cols-3 gap-3">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="skeleton h-[74px]" />
+          ))}
+        </div>
+      ) : error || !s ? (
+        <p className="mt-3 text-sm text-destructive">
+          {error instanceof Error ? error.message : "Statistiques indisponibles."}
+        </p>
+      ) : (
+        <>
+          <div key={periode} className="animate-fade-up mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <Tuile label="Commandes validées" valeur={formatNombre(s.commandes_validees)} />
+            <Tuile label="Promotions" valeur={formatNombre(s.promotions)} />
+            <Tuile
+              label="Dû à l'admin"
+              valeur={formatFCFA(s.montant_du)}
+              accent
+              className="col-span-2 sm:col-span-1"
+            />
+          </div>
+          <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+            Calcul : {formatNombre(s.commandes_validees)} × {formatFCFA(data.parametres.prix_par_commande_payee)}{" "}
+            (commande validée) + {formatNombre(s.promotions)} ×{" "}
+            {formatFCFA(data.parametres.prix_promotion)} (promotion).
+          </p>
+          <div className="mt-3 flex items-center justify-between rounded-lg border border-border bg-surface-2 px-3 py-2.5">
+            <span className="text-[12px] text-muted-foreground">
+              Solde admin actuel (restant à encaisser)
+            </span>
+            <span className="num text-[15px] font-semibold" style={{ color: "var(--color-money)" }}>
+              {formatFCFA(data.solde_admin ?? soldeActuel)}
+            </span>
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
+function Tuile({
+  label,
+  valeur,
+  accent,
+  className = "",
+}: {
+  label: string;
+  valeur: string;
+  accent?: boolean;
+  className?: string;
+}) {
+  return (
+    <div className={`lift rounded-lg border border-border bg-surface p-3 ${className}`}>
+      <p className="label-kpi text-[10px]">{label}</p>
+      <p
+        className="num mt-1.5 text-xl font-semibold"
+        style={accent ? { color: "var(--color-money)" } : undefined}
+      >
+        {valeur}
+      </p>
+    </div>
+  );
+}
+
 
 function Ligne({
   icone,

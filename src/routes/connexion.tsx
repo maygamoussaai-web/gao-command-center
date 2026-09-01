@@ -51,7 +51,7 @@ function Connexion() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4">
+    <div className="aurora relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.35]"
@@ -64,16 +64,16 @@ function Connexion() {
       />
       <div className="relative w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 grid size-11 place-items-center rounded-xl bg-primary text-base font-bold text-primary-foreground">
+          <div className="icon-tile animate-float mx-auto mb-4 size-11 text-base font-bold">
             G
           </div>
-          <h1 className="wordmark text-2xl text-foreground">GAO FOOD</h1>
+          <h1 className="wordmark text-gradient text-2xl">GAO FOOD</h1>
           <p className="mt-1.5 text-xs tracking-[0.18em] text-muted-foreground uppercase">
             Console Admin
           </p>
         </div>
 
-        <div className="panel p-4">
+        <div className="panel panel-glow animate-panel-in p-4">
           <form onSubmit={soumettre} className="space-y-5">
             <ChampMotDePasse
               id="mot_de_passe"
@@ -91,7 +91,7 @@ function Connexion() {
             <button
               type="submit"
               disabled={envoi}
-              className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="btn-primary sheen h-11 w-full"
             >
               {envoi && <Loader2 className="size-4 animate-spin" />}
               Se connecter
