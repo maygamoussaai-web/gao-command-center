@@ -26,7 +26,9 @@ import {
   formatNombre,
   leverSuspension,
   listRestaurants,
+  statsRestaurant,
   suspendreRestaurant,
+  type PeriodeResto,
   type RestaurantAdmin,
 } from "@/lib/admin-api";
 
