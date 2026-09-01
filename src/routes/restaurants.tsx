@@ -442,30 +442,8 @@ function PanneauDetail({ id, onClose }: { id: string; onClose: () => void }) {
               />
             </section>
 
-            <section className="panel p-4">
-              <p className="label-kpi">
-                Activité facturée
-              </p>
-              <div className="mt-3 grid grid-cols-3 gap-3 text-center">
-                {(
-                  [
-                    ["Aujourd'hui", data.stats.jour],
-                    ["Cette semaine", data.stats.semaine],
-                    ["Ce mois", data.stats.mois],
-                  ] as const
-                ).map(([label, s]) => (
-                  <div key={label} className="rounded-lg border border-border bg-surface-2 p-3">
-                    <p className="text-[11px] text-muted-foreground">{label}</p>
-                    <p className="num mt-1 text-lg font-semibold">
-                      {formatNombre(s.commandes_validees)}
-                    </p>
-                    <p className="text-[11px] text-muted-foreground">
-                      {formatNombre(s.promotions)} promo.
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
+            <BlocStats restaurantId={id} soldeActuel={Number(r.solde_admin)} />
+
 
             <section className="panel p-4">
               <p className="label-kpi">
