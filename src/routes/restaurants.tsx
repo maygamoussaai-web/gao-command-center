@@ -148,7 +148,7 @@ function PageRestaurants() {
                 onClick={() => setFiltre(f.cle)}
                 className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                   filtre === f.cle
-                    ? "bg-surface text-foreground shadow-sm"
+                    ? "seg-active"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -367,7 +367,7 @@ function PanneauDetail({ id, onClose }: { id: string; onClose: () => void }) {
           </p>
         ) : (
           <div className="space-y-4 p-4">
-            <section className="panel p-4">
+            <section className="panel panel-glow sheen p-4">
               <p className="label-kpi">
                 Solde dû
               </p>

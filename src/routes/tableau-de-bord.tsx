@@ -117,7 +117,7 @@ function TableauDeBord() {
                 onClick={() => setPeriode(p.cle)}
                 className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                   periode === p.cle
-                    ? "bg-surface text-foreground shadow-sm"
+                    ? "seg-active"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -136,7 +136,7 @@ function TableauDeBord() {
       </div>
 
       {/* Solde dû par les restaurateurs — métrique prioritaire */}
-      <section className="panel animate-fade-up relative overflow-hidden p-5">
+      <section className="panel panel-glow sheen animate-fade-up relative overflow-hidden p-5">
         <div
           aria-hidden
           className="absolute inset-y-0 left-0 w-1"
@@ -314,7 +314,7 @@ function CarteStat({
       style={{ animationDelay: `${80 + index * 60}ms` }}
     >
       <div className="flex items-center gap-2 text-muted-foreground">
-        <span className="grid size-7 place-items-center rounded-md bg-surface-2 text-primary">
+        <span className="icon-tile size-7">
           {icone}
         </span>
         <span className="label-kpi text-[10px]">{label}</span>

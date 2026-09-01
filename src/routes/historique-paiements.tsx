@@ -133,7 +133,7 @@ function PagePaiements() {
                 onClick={() => setPeriode(p.cle)}
                 className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                   periode === p.cle
-                    ? "bg-surface text-foreground shadow-sm"
+                    ? "seg-active"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -151,7 +151,7 @@ function PagePaiements() {
         </div>
       </div>
 
-      <section className="panel animate-fade-up flex flex-wrap items-center justify-between gap-6 p-5">
+      <section className="panel panel-glow sheen animate-fade-up flex flex-wrap items-center justify-between gap-6 p-5">
         <div>
           <p className="flex items-center gap-2 label-kpi">
             <Banknote className="size-3.5" style={{ color: "var(--color-money)" }} />
@@ -184,10 +184,11 @@ function PagePaiements() {
           </div>
         ) : (
           <ul>
-            {liste.map((p) => (
+            {liste.map((p, i) => (
               <li
                 key={p.id}
-                className="grid grid-cols-1 gap-1 border-b border-border px-5 py-3 last:border-0 md:grid-cols-[minmax(0,1.2fr)_minmax(0,2fr)_minmax(0,1fr)] md:items-center md:gap-4"
+                style={{ animationDelay: `${Math.min(i, 14) * 28}ms` }}
+                className="row-gradient animate-fade-up grid grid-cols-1 gap-1 border-b border-border px-5 py-3 last:border-0 md:grid-cols-[minmax(0,1.2fr)_minmax(0,2fr)_minmax(0,1fr)] md:items-center md:gap-4"
               >
                 <span className="num text-xs text-muted-foreground md:text-sm">
                   {formatDate(p.created_at)}
