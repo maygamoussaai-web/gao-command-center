@@ -217,7 +217,87 @@ function TableauDeBord() {
   );
 }
 
+function CarteParametres({ parametres }: { parametres: ParametresAdmin }) {
+  const { token } = useAuth();
+  const qc = useQueryClient();
+  const [commande, setCommande] = useState(String(parametres.prix_par_commande_payee));
+  const [promo, setPromo] = useState(String(parametres.prix_promotion));
+
+  useEffect(() => {
+    setCommande(String(parametres.prix_par_commande_payee));
+    setPromo(String(parametres.prix_promotion));
+  }, [parametres.prix_par_commande_payee, parametres.prix_promotion]);
+
+  const m = useMutation({
+    mutationFn: () =>
+      updateParametres(token!, {
+        prix_par_commande_payee: Math.max(0, Math.round(Number(commande) || 0)),
+        prix_promotion: Math.max(0, Math.round(Number(promo) || 0)),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
+      qc.invalidateQueries({ queryKey: ["stats-restaurant"] });
+    },
+  });
+
+  const modifie =
+    Number(commande) !== parametres.prix_par_commande_payee ||
+    Number(promo) !== parametres.prix_promotion;
+
+  return (
+    <div className="w-full max-w-sm rounded-xl border border-border bg-surface-2/60 p-3.5">
+      <p className="flex items-center gap-2 label-kpi text-[10px]">
+        <Settings2 className="size-3.5 text-primary" />
+        Tarifs facturés aux restaurateurs
+      </p>
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <label className="block text-xs">
+          <span className="text-muted-foreground">Par commande validée</span>
+          <input
+            type="number"
+            min={0}
+            inputMode="numeric"
+            value={commande}
+            onChange={(e) => setCommande(e.target.value)}
+            className="field num mt-1.5"
+          />
+        </label>
+        <label className="block text-xs">
+          <span className="text-muted-foreground">Par promotion</span>
+          <input
+            type="number"
+            min={0}
+            inputMode="numeric"
+            value={promo}
+            onChange={(e) => setPromo(e.target.value)}
+            className="field num mt-1.5"
+          />
+        </label>
+      </div>
+      <div className="mt-3 flex items-center justify-between gap-3">
+        <p className="text-[11px] text-muted-foreground">Montants en FCFA</p>
+        <button
+          onClick={() => m.mutate()}
+          disabled={m.isPending || !modifie}
+          className="btn-primary h-8 px-3 text-xs"
+        >
+          {m.isPending ? (
+            <Loader2 className="size-3.5 animate-spin" />
+          ) : (
+            <Check className="size-3.5" />
+          )}
+          {m.isSuccess && !modifie ? "Enregistré" : "Enregistrer"}
+        </button>
+      </div>
+      {m.error && (
+        <p className="mt-2 text-[11px] text-destructive">{(m.error as Error).message}</p>
+      )}
+    </div>
+  );
+}
+
 function CarteStat({
+
   icone,
   label,
   valeur,
