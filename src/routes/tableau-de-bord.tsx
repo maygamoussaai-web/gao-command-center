@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertTriangle,
   ArrowUpRight,
   Banknote,
+  Check,
   Loader2,
   RefreshCw,
+  Settings2,
   Store,
   TrendingUp,
   Trophy,
@@ -15,7 +17,14 @@ import {
 } from "lucide-react";
 import { ConsoleLayout } from "@/components/ConsoleLayout";
 import { useAuth } from "@/lib/auth-context";
-import { dashboard, formatFCFA, formatNombre, type PeriodeStats } from "@/lib/admin-api";
+import {
+  dashboard,
+  formatFCFA,
+  formatNombre,
+  updateParametres,
+  type ParametresAdmin,
+  type PeriodeStats,
+} from "@/lib/admin-api";
 
 export const Route = createFileRoute("/tableau-de-bord")({
   ssr: false,
