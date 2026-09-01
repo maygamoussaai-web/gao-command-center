@@ -150,20 +150,8 @@ function TableauDeBord() {
               restaurants de la plateforme.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
-            <div>
-              <p className="text-xs text-muted-foreground">Prix par commande payée</p>
-              <p className="num mt-1 font-semibold">
-                {formatFCFA(data.parametres.prix_par_commande_payee)}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Prix promotion</p>
-              <p className="num mt-1 font-semibold">
-                {formatFCFA(data.parametres.prix_promotion)}
-              </p>
-            </div>
-          </div>
+          <CarteParametres parametres={data.parametres} />
+
         </div>
       </section>
 
