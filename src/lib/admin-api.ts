@@ -160,6 +160,38 @@ export function leverSuspension(token: string, restaurant_id: string) {
   });
 }
 
+export type ParametresAdmin = { prix_promotion: number; prix_par_commande_payee: number };
+
+export function updateParametres(token: string, parametres: ParametresAdmin) {
+  return invoke<{ parametres: ParametresAdmin }>("admin-api", {
+    action: "update_parametres",
+    token,
+    prix_promotion: parametres.prix_promotion,
+    prix_par_commande_payee: parametres.prix_par_commande_payee,
+  }).then((r) => r.parametres);
+}
+
+export type PeriodeResto = "jour" | "semaine" | "mois" | "tout";
+
+export type StatsRestaurantDetail = {
+  stats: Record<
+    PeriodeResto,
+    { commandes_validees: number; promotions: number; montant_du: number }
+  >;
+  solde_admin: number;
+  parametres: ParametresAdmin;
+};
+
+export async function statsRestaurant(token: string, restaurant_id: string) {
+  const { data, error } = await supabase.rpc("admin_stats_restaurant", {
+    p_token: token,
+    p_restaurant_id: restaurant_id,
+  });
+  if (error) throw new Error(error.message || "Statistiques indisponibles.");
+  return data as unknown as StatsRestaurantDetail;
+}
+
+
 const dateFmt = new Intl.DateTimeFormat("fr-FR", {
   day: "2-digit",
   month: "short",
