@@ -74,7 +74,9 @@ function PageRestaurants() {
   const liste = useMemo(() => {
     const q = recherche.trim().toLowerCase();
     return (data ?? [])
+      .filter((r) => r.statut === "actif" || r.statut === "suspendu")
       .filter((r) => (filtre === "tous" ? true : r.statut === filtre))
+
       .filter((r) => (q ? r.nom.toLowerCase().includes(q) || r.quartier.toLowerCase().includes(q) : true))
       .sort((a, b) => Number(b.solde_admin) - Number(a.solde_admin));
   }, [data, recherche, filtre]);
