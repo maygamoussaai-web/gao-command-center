@@ -193,6 +193,46 @@ export async function statsRestaurant(token: string, restaurant_id: string) {
   return data as unknown as StatsRestaurantDetail;
 }
 
+export type RestaurantEnAttente = {
+  id: string;
+  nom: string;
+  logo_url: string | null;
+  quartier: string;
+  prix_livraison: number;
+  horaire_ouverture: string;
+  horaire_fermeture: string;
+  delai_livraison_min_min: number;
+  delai_livraison_max_min: number;
+  statut: "en_attente" | "refuse";
+  motif_refus: string | null;
+  created_at: string;
+  restaurateur: { prenom: string; nom: string; numero: string } | null;
+};
+
+export async function restaurantsEnAttente(token: string) {
+  const { data, error } = await supabase.rpc("admin_restaurants_en_attente", { p_token: token });
+  if (error) throw new Error(error.message || "Demandes indisponibles.");
+  return (data as unknown as RestaurantEnAttente[]) ?? [];
+}
+
+export async function validerRestaurant(token: string, restaurant_id: string) {
+  const { error } = await supabase.rpc("admin_valider_restaurant", {
+    p_token: token,
+    p_restaurant_id: restaurant_id,
+  });
+  if (error) throw new Error(error.message || "Validation impossible.");
+}
+
+export async function refuserRestaurant(token: string, restaurant_id: string, motif: string) {
+  const { error } = await supabase.rpc("admin_refuser_restaurant", {
+    p_token: token,
+    p_restaurant_id: restaurant_id,
+    p_motif: motif,
+  });
+  if (error) throw new Error(error.message || "Refus impossible.");
+}
+
+
 
 const dateFmt = new Intl.DateTimeFormat("fr-FR", {
   day: "2-digit",
