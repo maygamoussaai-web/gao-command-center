@@ -514,6 +514,7 @@ export type Database = {
           horaire_ouverture: string
           id: string
           logo_url: string | null
+          motif_refus: string | null
           motif_suspension: string | null
           nom: string
           prix_livraison: number
@@ -531,6 +532,7 @@ export type Database = {
           horaire_ouverture: string
           id?: string
           logo_url?: string | null
+          motif_refus?: string | null
           motif_suspension?: string | null
           nom: string
           prix_livraison?: number
@@ -548,6 +550,7 @@ export type Database = {
           horaire_ouverture?: string
           id?: string
           logo_url?: string | null
+          motif_refus?: string | null
           motif_suspension?: string | null
           nom?: string
           prix_livraison?: number
@@ -694,9 +697,18 @@ export type Database = {
       }
     }
     Functions: {
+      admin_refuser_restaurant: {
+        Args: { p_motif: string; p_restaurant_id: string; p_token: string }
+        Returns: undefined
+      }
+      admin_restaurants_en_attente: { Args: { p_token: string }; Returns: Json }
       admin_stats_restaurant: {
         Args: { p_restaurant_id: string; p_token: string }
         Returns: Json
+      }
+      admin_valider_restaurant: {
+        Args: { p_restaurant_id: string; p_token: string }
+        Returns: undefined
       }
       annuler_commandes_expirees: { Args: never; Returns: undefined }
       compter_annulations_jour: {
@@ -720,7 +732,7 @@ export type Database = {
     Enums: {
       methode_localisation: "audio" | "position"
       statut_commande: "en_cours" | "vu" | "payee" | "annulee"
-      statut_restaurant: "actif" | "suspendu"
+      statut_restaurant: "actif" | "suspendu" | "en_attente" | "refuse"
       type_article: "plat" | "boisson"
       type_media: "image" | "video"
     }
@@ -852,7 +864,7 @@ export const Constants = {
     Enums: {
       methode_localisation: ["audio", "position"],
       statut_commande: ["en_cours", "vu", "payee", "annulee"],
-      statut_restaurant: ["actif", "suspendu"],
+      statut_restaurant: ["actif", "suspendu", "en_attente", "refuse"],
       type_article: ["plat", "boisson"],
       type_media: ["image", "video"],
     },

@@ -4,8 +4,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertTriangle,
   Banknote,
+  Check,
   ChevronRight,
   Clock,
+  Hourglass,
   Loader2,
   MapPin,
   Phone,
@@ -26,11 +28,16 @@ import {
   formatNombre,
   leverSuspension,
   listRestaurants,
+  refuserRestaurant,
+  restaurantsEnAttente,
   statsRestaurant,
   suspendreRestaurant,
+  validerRestaurant,
   type PeriodeResto,
   type RestaurantAdmin,
+  type RestaurantEnAttente,
 } from "@/lib/admin-api";
+
 
 export const Route = createFileRoute("/restaurants")({
   ssr: false,
@@ -74,7 +81,9 @@ function PageRestaurants() {
   const liste = useMemo(() => {
     const q = recherche.trim().toLowerCase();
     return (data ?? [])
+      .filter((r) => r.statut === "actif" || r.statut === "suspendu")
       .filter((r) => (filtre === "tous" ? true : r.statut === filtre))
+
       .filter((r) => (q ? r.nom.toLowerCase().includes(q) || r.quartier.toLowerCase().includes(q) : true))
       .sort((a, b) => Number(b.solde_admin) - Number(a.solde_admin));
   }, [data, recherche, filtre]);
@@ -158,6 +167,10 @@ function PageRestaurants() {
           </div>
         </div>
       </div>
+
+      <ModuleEnAttente />
+
+
 
 
       <div className="panel animate-fade-up overflow-hidden">
@@ -745,5 +758,246 @@ function Modal({
         <div className="mt-4">{children}</div>
       </div>
     </div>
+  );
+}
+
+function ModuleEnAttente() {
+  const { token } = useAuth();
+  const qc = useQueryClient();
+  const [ouvert, setOuvert] = useState(true);
+  const [refus, setRefus] = useState<RestaurantEnAttente | null>(null);
+  const [motif, setMotif] = useState("");
+  const [erreur, setErreur] = useState<string | null>(null);
+
+  const { data, isLoading, error, refetch, isRefetching } = useQuery({
+    queryKey: ["restaurants-en-attente", token],
+    queryFn: () => restaurantsEnAttente(token!),
+    enabled: !!token,
+  });
+
+  const rafraichir = () => {
+    refetch();
+    qc.invalidateQueries({ queryKey: ["restaurants"] });
+    qc.invalidateQueries({ queryKey: ["dashboard"] });
+  };
+
+  const valider = useMutation({
+    mutationFn: (id: string) => validerRestaurant(token!, id),
+    onSuccess: () => {
+      setErreur(null);
+      rafraichir();
+    },
+    onError: (e) => setErreur(e instanceof Error ? e.message : "Validation impossible."),
+  });
+
+  const refuser = useMutation({
+    mutationFn: (v: { id: string; motif: string }) => refuserRestaurant(token!, v.id, v.motif),
+    onSuccess: () => {
+      setErreur(null);
+      setRefus(null);
+      setMotif("");
+      rafraichir();
+    },
+    onError: (e) => setErreur(e instanceof Error ? e.message : "Refus impossible."),
+  });
+
+  const liste = data ?? [];
+  const enAttente = liste.filter((r) => r.statut === "en_attente");
+  const refuses = liste.filter((r) => r.statut === "refuse");
+
+  return (
+    <section className="panel panel-glow animate-fade-up overflow-hidden">
+      <button
+        onClick={() => setOuvert((v) => !v)}
+        aria-expanded={ouvert}
+        className="sheen flex w-full items-center gap-3 px-4 py-3 text-left"
+      >
+        <span className="icon-tile grid size-8 shrink-0 place-items-center rounded-lg">
+          <Hourglass className="size-4 text-primary" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="flex items-center gap-2">
+            <span className="text-[14px] font-semibold">Demandes de création</span>
+            {enAttente.length > 0 && (
+              <span
+                className="num rounded-full px-2 py-0.5 text-[10px] font-bold text-primary-foreground"
+                style={{ backgroundColor: "var(--color-primary)" }}
+              >
+                {formatNombre(enAttente.length)}
+              </span>
+            )}
+          </span>
+          <span className="mt-0.5 block text-[12px] text-muted-foreground">
+            {isLoading
+              ? "Chargement…"
+              : enAttente.length === 0
+                ? "Aucun restaurant en attente de validation."
+                : `${formatNombre(enAttente.length)} restaurant(s) attendent ton autorisation`}
+          </span>
+        </span>
+        <RefreshCw
+          onClick={(e) => {
+            e.stopPropagation();
+            rafraichir();
+          }}
+          className={`size-4 shrink-0 text-muted-foreground transition-colors hover:text-foreground ${isRefetching ? "animate-spin" : ""}`}
+        />
+        <ChevronRight
+          className={`size-4 shrink-0 text-muted-foreground transition-transform duration-200 ${ouvert ? "rotate-90 text-primary" : ""}`}
+        />
+      </button>
+
+      {ouvert && (
+        <div className="animate-fade-up border-t border-border">
+          {error && (
+            <p className="px-4 py-4 text-[12px] text-destructive">
+              {error instanceof Error ? error.message : "Demandes indisponibles."}
+            </p>
+          )}
+          {erreur && (
+            <p className="mx-4 mt-3 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-[12px] text-destructive">
+              {erreur}
+            </p>
+          )}
+          {!error && liste.length === 0 && !isLoading && (
+            <p className="px-4 py-8 text-center text-[13px] text-muted-foreground">
+              Toutes les demandes ont été traitées. Les nouveaux comptes restaurateurs apparaîtront
+              ici avant d'accéder à la plateforme.
+            </p>
+          )}
+          <ul>
+            {[...enAttente, ...refuses].map((r, i) => (
+              <li
+                key={r.id}
+                className="row-gradient animate-fade-up grid gap-3 border-b border-border px-4 py-3 last:border-0 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)_minmax(0,1fr)_auto] md:items-center"
+                style={{ animationDelay: `${Math.min(i, 10) * 30}ms` }}
+              >
+                <div className="flex min-w-0 items-center gap-2.5">
+                  {r.logo_url ? (
+                    <img
+                      src={r.logo_url}
+                      alt={`Logo ${r.nom}`}
+                      loading="lazy"
+                      className="size-8 shrink-0 rounded-md object-cover ring-1 ring-border"
+                    />
+                  ) : (
+                    <span className="grid size-8 shrink-0 place-items-center rounded-md bg-surface-2 text-muted-foreground">
+                      <Store className="size-3.5" />
+                    </span>
+                  )}
+                  <div className="min-w-0">
+                    <p className="truncate text-[13px] font-medium">{r.nom}</p>
+                    <p className="truncate text-[11px] text-muted-foreground">
+                      {r.quartier} · demandé le {formatDate(r.created_at)}
+                    </p>
+                  </div>
+                </div>
+                <div className="min-w-0 text-[12px]">
+                  <p className="truncate">
+                    {r.restaurateur
+                      ? `${r.restaurateur.prenom} ${r.restaurateur.nom}`
+                      : "Restaurateur inconnu"}
+                  </p>
+                  <p className="num truncate text-[11px] text-muted-foreground">
+                    {r.restaurateur?.numero ?? "—"}
+                  </p>
+                </div>
+                <div className="min-w-0 text-[12px] text-muted-foreground">
+                  <p className="num">
+                    {r.horaire_ouverture.slice(0, 5)} – {r.horaire_fermeture.slice(0, 5)}
+                  </p>
+                  <p className="num text-[11px]">
+                    {formatFCFA(r.prix_livraison)} · {r.delai_livraison_min_min}–
+                    {r.delai_livraison_max_min} min
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 md:justify-end">
+                  {r.statut === "refuse" ? (
+                    <>
+                      <span className="inline-flex items-center gap-1 rounded-full border border-destructive/30 bg-destructive/10 px-2 py-0.5 text-[10px] font-medium text-destructive">
+                        <X className="size-3" />
+                        Refusé
+                      </span>
+                      <button
+                        onClick={() => valider.mutate(r.id)}
+                        disabled={valider.isPending}
+                        className="btn-primary"
+                      >
+                        Valider quand même
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => valider.mutate(r.id)}
+                        disabled={valider.isPending}
+                        className="btn-primary inline-flex items-center gap-1.5"
+                      >
+                        <Check className="size-3.5" />
+                        Valider
+                      </button>
+                      <button
+                        onClick={() => {
+                          setMotif("");
+                          setErreur(null);
+                          setRefus(r);
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/30 px-3 py-1.5 text-[12px] font-medium text-destructive transition-colors hover:bg-destructive/10"
+                      >
+                        <X className="size-3.5" />
+                        Refuser
+                      </button>
+                    </>
+                  )}
+                </div>
+                {r.statut === "refuse" && r.motif_refus && (
+                  <p className="rounded-lg border border-destructive/25 bg-destructive/5 px-3 py-2 text-[12px] text-destructive md:col-span-4">
+                    Motif du refus — {r.motif_refus}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {refus && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="panel panel-glow animate-panel-in w-full max-w-md p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-[15px] font-semibold">Refuser la création</h3>
+                <p className="mt-0.5 text-[12px] text-muted-foreground">{refus.nom}</p>
+              </div>
+              <button
+                onClick={() => setRefus(null)}
+                aria-label="Fermer"
+                className="grid size-8 place-items-center rounded-lg border border-border text-muted-foreground hover:bg-accent"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+            <label className="label-kpi mt-4 block" htmlFor="motif-refus">
+              Motif du refus (obligatoire)
+            </label>
+            <textarea
+              id="motif-refus"
+              value={motif}
+              onChange={(e) => setMotif(e.target.value)}
+              rows={3}
+              placeholder="Ex. informations incomplètes, quartier non couvert…"
+              className="field mt-1.5 w-full resize-none"
+            />
+            <button
+              onClick={() => refuser.mutate({ id: refus.id, motif })}
+              disabled={refuser.isPending || motif.trim().length === 0}
+              className="mt-4 w-full rounded-lg bg-destructive px-4 py-2 text-[13px] font-semibold text-destructive-foreground transition-opacity disabled:opacity-50"
+            >
+              {refuser.isPending ? "Refus en cours…" : "Confirmer le refus"}
+            </button>
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
