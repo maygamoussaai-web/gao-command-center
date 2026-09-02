@@ -92,8 +92,10 @@ export type RestaurantAdmin = {
   delai_livraison_min_min: number;
   delai_livraison_max_min: number;
   solde_admin: number;
-  statut: "actif" | "suspendu";
+  statut: "actif" | "suspendu" | "en_attente" | "refuse";
   motif_suspension: string | null;
+  motif_refus?: string | null;
+
   created_at: string;
   restaurateurs: { prenom: string; nom: string; numero: string } | null;
 };
