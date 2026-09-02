@@ -159,6 +159,10 @@ function PageRestaurants() {
         </div>
       </div>
 
+      <ModuleEnAttente />
+
+
+
 
       <div className="panel animate-fade-up overflow-hidden">
         <div className="hidden grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] gap-4 border-b border-border px-5 py-2.5 label-kpi md:grid">
