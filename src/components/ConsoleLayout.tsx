@@ -30,6 +30,7 @@ export function ConsoleLayout({ children }: { children: ReactNode }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [modal, setModal] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const enAttente = useNotificationsAttente();
 
   useEffect(() => {
     if (!chargement && !token) navigate({ to: "/connexion", replace: true });
