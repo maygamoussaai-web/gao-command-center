@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useTheme } from "@/lib/theme";
+import { useNotificationsAttente } from "@/lib/use-notifications-attente";
 import { ModalMotDePasse } from "./ModalMotDePasse";
 
 const NAV = [
@@ -29,6 +30,7 @@ export function ConsoleLayout({ children }: { children: ReactNode }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [modal, setModal] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const enAttente = useNotificationsAttente();
 
   useEffect(() => {
     if (!chargement && !token) navigate({ to: "/connexion", replace: true });
@@ -88,8 +90,13 @@ export function ConsoleLayout({ children }: { children: ReactNode }) {
                   className={`size-4 transition-colors ${actif ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}
                 />
                 <span className="truncate">{label}</span>
+                {to === "/restaurants" && enAttente > 0 && (
+                  <span className="num ml-auto grid min-w-5 place-items-center rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+                    {enAttente}
+                  </span>
+                )}
                 <ChevronRight
-                  className={`ml-auto size-3.5 text-muted-foreground transition-all duration-200 ${
+                  className={`${to === "/restaurants" && enAttente > 0 ? "" : "ml-auto"} size-3.5 text-muted-foreground transition-all duration-200 ${
                     actif ? "opacity-70" : "-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-50"
                   }`}
                 />
@@ -199,7 +206,14 @@ export function ConsoleLayout({ children }: { children: ReactNode }) {
                 {actif && (
                   <span aria-hidden className="absolute top-0 h-[2px] w-8 rounded-full bg-primary" />
                 )}
-                <Icon className="size-4" />
+                <span className="relative">
+                  <Icon className="size-4" />
+                  {to === "/restaurants" && enAttente > 0 && (
+                    <span className="num absolute -top-1.5 -right-2 grid min-w-4 place-items-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">
+                      {enAttente}
+                    </span>
+                  )}
+                </span>
                 {court}
               </Link>
             );
