@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useTheme } from "@/lib/theme";
+import { useNotificationsAttente } from "@/lib/use-notifications-attente";
 import { ModalMotDePasse } from "./ModalMotDePasse";
 
 const NAV = [
