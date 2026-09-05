@@ -90,8 +90,13 @@ export function ConsoleLayout({ children }: { children: ReactNode }) {
                   className={`size-4 transition-colors ${actif ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}
                 />
                 <span className="truncate">{label}</span>
+                {to === "/restaurants" && enAttente > 0 && (
+                  <span className="num ml-auto grid min-w-5 place-items-center rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+                    {enAttente}
+                  </span>
+                )}
                 <ChevronRight
-                  className={`ml-auto size-3.5 text-muted-foreground transition-all duration-200 ${
+                  className={`${to === "/restaurants" && enAttente > 0 ? "" : "ml-auto"} size-3.5 text-muted-foreground transition-all duration-200 ${
                     actif ? "opacity-70" : "-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-50"
                   }`}
                 />
