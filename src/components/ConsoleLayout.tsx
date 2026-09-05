@@ -206,7 +206,14 @@ export function ConsoleLayout({ children }: { children: ReactNode }) {
                 {actif && (
                   <span aria-hidden className="absolute top-0 h-[2px] w-8 rounded-full bg-primary" />
                 )}
-                <Icon className="size-4" />
+                <span className="relative">
+                  <Icon className="size-4" />
+                  {to === "/restaurants" && enAttente > 0 && (
+                    <span className="num absolute -top-1.5 -right-2 grid min-w-4 place-items-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">
+                      {enAttente}
+                    </span>
+                  )}
+                </span>
                 {court}
               </Link>
             );
